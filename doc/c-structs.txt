@@ -1,0 +1,17 @@
+==============================================================================
+------------------------------------------------------------------------------
+                                                              *CStructs.setup()*
+                          `CStructs.setup`({user_cfg})
+Sets/Configures c-structs.nvim
+Parameters ~
+{user_cfg} `(table|nil)` Module config table.
+
+Usage ~
+>lua
+
+  require('c-structs').setup() -- use default config
+  -- OR
+  require('c-structs').setup({}) -- replace {} with your config table
+<
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
