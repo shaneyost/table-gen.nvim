@@ -16,4 +16,4 @@ end
 vim.opt.runtimepath:append(plenary_path)
 
 -- Load your plugin after setting up the runtimepath
-require("c-structs").setup({})
+require("table-gen").setup({})

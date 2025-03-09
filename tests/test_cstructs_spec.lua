@@ -1,5 +1,5 @@
 describe("placeholder", function()
     it("should require plugin", function()
-        require("c-structs")
+        require("table-gen")
     end)
 end)

@@ -1,14 +1,14 @@
 <div align="center">
-<h1>C-Structs Anatomy</h1>
+<h1>Table Generator for C</h1>
 <p align="center">
-<a href="https://github.com/shaneyost/c-structs.nvim/actions/workflows/ci.yaml">
-<img src="https://github.com/shaneyost/c-structs.nvim/actions/workflows/ci.yaml/badge.svg" alt="CI Status">
+<a href="https://github.com/shaneyost/table-gen.nvim/actions/workflows/ci.yaml">
+<img src="https://github.com/shaneyost/table-gen.nvim/actions/workflows/ci.yaml/badge.svg" alt="CI Status">
 </a>
-<a href="https://github.com/shaneyost/c-structs.nvim/blob/main/LICENSE">
-<img src="https://img.shields.io/github/license/shaneyost/c-structs.nvim" alt="License">
+<a href="https://github.com/shaneyost/table-gen.nvim/blob/main/LICENSE">
+<img src="https://img.shields.io/github/license/shaneyost/table-gen.nvim" alt="License">
 </a>
-<a href="https://github.com/shaneyost/c-structs.nvim/issues">
-<img src="https://img.shields.io/github/issues/shaneyost/c-structs.nvim" alt="GitHub Issues">
+<a href="https://github.com/shaneyost/table-gen.nvim/issues">
+<img src="https://img.shields.io/github/issues/shaneyost/table-gen.nvim" alt="GitHub Issues">
 </a>
 </p>
 </div>
@@ -20,10 +20,10 @@ Coming soon, in development ...
 
 ```lua
 return {
-    "shaneyost/c-structs.nvim",
+    "shaneyost/table-gen.nvim",
     config = function()
-        local cstructs = require("c-structs")
-        cstructs.setup({})
+        local tablegen = require("table-gen")
+        tablegen.setup({})
     end,
 }
 ```
