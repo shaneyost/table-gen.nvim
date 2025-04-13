@@ -13,16 +13,7 @@ typedef union
 } __attribute__((__packed__)) %s;
 ]]
 
---- Creates a formatted string that reflects a union of the passed in C struct
---- and dynamicallyl adds a raw byte array to facilitate easier i/o operations
----@param data table Describes all parts of a C structure including init vals
----@return string body The string containing the body of the C structure
----@return string sdef The union type specifier
----@return table vals The table of values for initialization
----
----@usage >lua
----     local body, sdef, vals = create_struct_body(dadta)
---- <
+-- Create a cdef string reflecting a C struct definition
 local function create_struct_body(data)
     assert(type(data) == "table", "Error: bad type for data")
     local body = {}
@@ -40,24 +31,15 @@ local function create_struct_body(data)
     return string.format(_template, table.concat(body, "\n"), size, sdef), sdef, vals
 end
 
---- Creates a `cdata` type constructor for creating instances of a C struct.
---- Function takes a table of data describing a C structure, creates a cdef
---- string, registers it with FFI registry and attaches a metatable to the
---- constructor.
----@param table data Describes all parts of a C structure including init vals
----@return cdata constructor An FFI `cdata` type constructor
+--- Create a `cdata` type constructor and define behavior using FFI library
+---@param data table Describes all parts of a C structure including init vals
+---@return constructor cdata An FFI `cdata` type constructor
 ---@return table vals A table of values for initialization
 ---
 ---@usage >lua
 ---     local struct = require("struct")
----     local data = require("data")
 ---     local MyConstructor, vals = struct.create_new_struct(data)
 ---     local instance = MyConstructor(vals)
----     print(m)
----     print(m:size())
----     local file = assert(io.open("table.bin", "wb"))
----     file:write(m:to_bytes())
----     file:close()
 --- <
 function TableGen.create_new_struct(data)
     local body, sdef, vals = create_struct_body(data)
@@ -75,11 +57,9 @@ function TableGen.create_new_struct(data)
         __tostring = function(self)
             local out = {}
             local size = self:size()
-            -- indexing C array must start at 0
             for i = 0, size - 1 do
                 local fmt = string.format("%02x", self.raw[i])
                 table.insert(out, fmt)
-                -- define 8 columns for hexdump
                 if 0 == ((i + 1) % 8) then
                     table.insert(out, "\n")
                 else
