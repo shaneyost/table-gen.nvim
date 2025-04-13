@@ -5,7 +5,7 @@ local utils = require("table-gen.utils")
 ---@eval return MiniDoc.afterlines_to_code(MiniDoc.current.eval_section)
 TableGen._cfg = {
     -- format specifier for hexdump
-    outfmt = "%02X"
+    outfmt = "%02X",
 }
 --minidoc_afterlines_end
 

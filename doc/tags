@@ -1,1 +1,3 @@
+TableGen._cfg	table-gen.txt	/*TableGen._cfg*
+TableGen.create_new_struct()	table-gen.txt	/*TableGen.create_new_struct()*
 TableGen.setup()	table-gen.txt	/*TableGen.setup()*

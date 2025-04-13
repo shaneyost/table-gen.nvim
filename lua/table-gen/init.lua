@@ -1,5 +1,4 @@
 local TableGen = {}
-local struct = require("table-gen.struct")
 local config = require("table-gen.config")
 
 --- Sets/Configures table-gen.nvim
