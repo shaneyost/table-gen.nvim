@@ -24,9 +24,9 @@ typedef struct {
 --   - Cleaner and more idiomatic integration with C data types.
 
 -- Create the constructor
-local mystruct_t = struct.new(def, 'Foo_t')
+local mystruct_t = struct.new(def, "Foo_t")
 -- Create the instance
-local mystruct = mystruct_t({x=1})
+local mystruct = mystruct_t({ x = 1 })
 assert(1 == mystruct.x)
 assert(0 == mystruct.y)
 
@@ -40,12 +40,12 @@ print(mystruct)
 
 -- Test some queries of sorts w/ ffi directly
 print(ffi.sizeof(mystruct))
-assert(ffi.istype(mystruct, ffi.typeof('Foo_t')))
-print(ffi.offsetof('Foo_t', 'y'))
+assert(ffi.istype(mystruct, ffi.typeof("Foo_t")))
+print(ffi.offsetof("Foo_t", "y"))
 
-if ffi.abi('le') then
+if ffi.abi("le") then
     print("Little-endian detected")
-elseif ffi.abi('be') then
+elseif ffi.abi("be") then
     print("Big-endian detected")
 end
 
@@ -56,10 +56,10 @@ typedef struct {
 } Bar_t;
 ]]
 
-local Bar_t = struct.new(another_def, 'Bar_t')
+local Bar_t = struct.new(another_def, "Bar_t")
 local bar = Bar_t({})
 print(bar)
-print(struct.nelem_in_array(bar.y, 'uint32_t'))
+print(struct.nelem_in_array(bar.y, "uint32_t"))
 
 -- For my notes
 local myvariable = ffi.new("int8_t", 42)
