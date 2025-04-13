@@ -1,6 +1,6 @@
-#!/usr/bin/env luajit
-local ffi = require("ffi")
 local TableGen = {}
+local ffi = require("ffi")
+local cfg = require("table-gen.config")
 
 local _template = [[
 typedef union
@@ -22,13 +22,19 @@ local function create_struct_body(data)
     local sdef = data[1].sdef
     local indent = "        "
     for _, member in ipairs(data) do
-        table.insert(body, string.format(indent .. "%s %s;", member.type, member.name))
+        table.insert(body, string.format(
+            indent .. "%s %s;",
+            member.type,member.name
+        ))
         -- size always reflects __packed__ (no padding)
         size = size + ffi.sizeof(member.type)
         assert(member.sdef == sdef, "Error: unmatched name")
         table.insert(vals, member.init)
     end
-    return string.format(_template, table.concat(body, "\n"), size, sdef), sdef, vals
+    return string.format(
+        _template,
+        table.concat(body, "\n"), size, sdef
+    ), sdef, vals
 end
 
 --- Create a `cdata` type constructor and define behavior using FFI library
@@ -58,7 +64,10 @@ function TableGen.create_new_struct(data)
             local out = {}
             local size = self:size()
             for i = 0, size - 1 do
-                local fmt = string.format("%02x", self.raw[i])
+                local fmt = string.format(
+                    cfg._get("outfmt"),
+                    self.raw[i]
+                )
                 table.insert(out, fmt)
                 if 0 == ((i + 1) % 8) then
                     table.insert(out, "\n")
