@@ -2,22 +2,13 @@
 local ffi = require("ffi")
 local TableGen = {}
 
-function TableGen.nelem_in_array(array, array_type)
-    return ffi.sizeof(array) / ffi.sizeof(array_type)
+local function st_create_cdef_body(config)
 end
 
-function TableGen.new(def, type)
-    ffi.cdef(def)
-    return ffi.metatype(ffi.typeof(type), {
-        __tostring = function(self)
-            local str = "%s (%s, size=%dbytes)"
-            return string.format(
-                str,
-                type,
-                tostring(ffi.typeof(self)),
-                ffi.sizeof(self)
-            )
-        end
-    })
+function TableGen.st_create_new_instance(config)
+    assert(type(config) == "table", "Error: invalid type for config")
+    -- ffi.cdef(st_create_cdef_body(config)
+    -- return ffi.metatype(ffi.typeof())
 end
+
 return TableGen
