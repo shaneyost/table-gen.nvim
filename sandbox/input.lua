@@ -1,12 +1,22 @@
 return {
     {
-        name = 'foo',
         type = 'uint8_t',
-        init = 0
+        name = 'x',
+        init = 0x00
     },
     {
-        name = 'bar',
-        type = 'uint8_t',
-        init = 0
+        name = 'a',
+        type = 'uint16_t',
+        init = 0x1122
+    },
+    {
+        name = 'd',
+        type = 'uint32_t',
+        init = 0xDEADBEEF
+    },
+    {
+        name = 'c',
+        type = 'uint16_t',
+        init = 0xAABB
     },
 }
