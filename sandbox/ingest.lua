@@ -1,36 +1,42 @@
 #!/usr/bin/env luajit
 local ffi = require("ffi")
-local cfg = require("struct_config")
-
-local function create_struct_body(config_file)
-    local body = {}
-    local size = 0
-    local sdef = config_file[1].sdef
-    for _, member in ipairs(config_file) do
-        table.insert(body, string.format(
-            "        %s %s;", member.type, member.name
-        ))
-        size = size + ffi.sizeof(member.type)
-        assert(member.sdef == sdef, "Error: unmatched name")
-    end
-    return body, size, sdef
+-- local struct = require("struct")
+-- local config = require("struct_config")
+local function new(cdef, type)
+    ffi.cdef(cdef)
+    return ffi.metatype(ffi.typeof(type), {
+        __index = {
+            size = function (self)
+                return ffi.sizeof(self)
+            end
+        },
+        __tostring = function (self)
+            local out = {}
+            for i=0, self:size()-1 do
+                local fmt = string.format("%02X", self.raw[i])
+                table.insert(out, fmt)
+            end
+            return table.concat(out, " ")
+        end
+    })
 end
 
-local function create_cdef_string(body, size, sdef)
-    assert(type(body) == "table", "Error: invalid type to body")
-    assert(type(size) == "number", "Error: invalid type to size")
-    assert(type(sdef) == "string", "Error: invalid type to sdef")
-    return string.format([[
+local cdef = [[
 typedef union
 {
-    struct
-    {
-%s
-    };
-    uint8_t raw[%d];
-} __attribute__((__packed__)) %s;
-]], table.concat(body, "\n"), size, sdef)
-end
+	struct
+	{
+		uint32_t x;
+		uint32_t y;
+		uint8_t  c;
+	};
+	uint8_t raw[2];
+} __attribute__((__packed__)) Model_u;
+]]
 
-local body, size, sdef = create_struct_body(cfg)
-print(create_cdef_string(body, size, sdef))
+local Model = new(cdef, 'Model_u')
+local m = Model({x=1})
+print(m)
+-- local Model = struct.create_new_struct(config)
+-- local m = Model({x=1})
+-- print(m)
