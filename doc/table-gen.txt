@@ -16,25 +16,6 @@ Usage ~
 
 ==============================================================================
 ------------------------------------------------------------------------------
-                                                  *TableGen.create_new_struct()*
-                      `TableGen.create_new_struct`({data})
-Create a `cdata` type constructor and define behavior using FFI library
-Parameters ~
-{data} `(table)` Describes all parts of a C structure including init vals
-Return ~
-`(constructor)` cdata An FFI `cdata` type constructor
-Return ~
-`(table)` vals A table of values for initialization
-
-Usage ~
->lua
-    local struct = require("struct")
-    local MyConstructor, vals = struct.create_new_struct(data)
-    local instance = MyConstructor(vals)
-<
-
-==============================================================================
-------------------------------------------------------------------------------
                                                                  *TableGen._cfg*
                                 `TableGen._cfg`
 The default configuration table

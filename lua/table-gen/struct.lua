@@ -1,8 +1,11 @@
 local TableGen = {}
 local ffi = require("ffi")
 local cfg = require("table-gen.config")
+local utl = require("table-gen.utils")
 
-local _template = [[
+local function create_cdef(struct_mems, struct_type, struct_size)
+    return string.format(
+        [[
 typedef union
 {
     struct
@@ -11,65 +14,49 @@ typedef union
     };
     uint8_t raw[%d];
 } __attribute__((__packed__)) %s;
-]]
-
--- Create a cdef string reflecting a C struct definition
-local function create_struct_body(data)
-    assert(type(data) == "table", "Error: bad type for data")
-    local body = {}
-    local vals = {}
-    local size = 0
-    local sdef = data[1].sdef
-    local indent = "        "
-    for _, member in ipairs(data) do
-        table.insert(body, string.format(indent .. "%s %s;", member.type, member.name))
-        -- size always reflects __packed__ (no padding)
-        size = size + ffi.sizeof(member.type)
-        assert(member.sdef == sdef, "Error: unmatched name")
-        table.insert(vals, member.init)
-    end
-    return string.format(_template, table.concat(body, "\n"), size, sdef), sdef, vals
+]],
+        struct_mems,
+        struct_size,
+        struct_type
+    )
 end
 
---- Create a `cdata` type constructor and define behavior using FFI library
----@param data table Describes all parts of a C structure including init vals
----@return constructor cdata An FFI `cdata` type constructor
----@return table vals A table of values for initialization
----
----@usage >lua
----     local struct = require("struct")
----     local MyConstructor, vals = struct.create_new_struct(data)
----     local instance = MyConstructor(vals)
---- <
-function TableGen.create_new_struct(data)
-    local body, sdef, vals = create_struct_body(data)
-    ffi.cdef(body)
-    return ffi.metatype(ffi.typeof(sdef), {
-        __index = {
-            to_bytes = function(self)
-                return ffi.string(self.raw, self:size())
-            end,
+local function create_binary(self, filename)
+    local file = assert(io.open(filename, "wb"))
+    file:write(ffi.string(self.raw, self:size()))
+    file:close()
+end
 
-            size = function(self)
-                return ffi.sizeof(self)
-            end,
-        },
-        __tostring = function(self)
-            local out = {}
-            local size = self:size()
-            for i = 0, size - 1 do
-                local fmt = string.format(cfg._get("outfmt"), self.raw[i])
-                table.insert(out, fmt)
-                if 0 == ((i + 1) % 8) then
-                    table.insert(out, "\n")
-                else
-                    table.insert(out, " ")
-                end
-            end
-            return table.concat(out)
+local _metatable = {
+    __index = {
+        create_binary = create_binary,
+        size = function(self)
+            return ffi.sizeof(self)
         end,
-    }),
-        vals
+    },
+    __tostring = function(self)
+        local out, size, fmt = {}, self:size(), cfg._cfg.outfmt
+        for i = 0, size - 1 do
+            out[#out + 1] = string.format(fmt, self.raw[i])
+            out[#out + 1] = ((i + 1) % 8 == 0) and "\n" or " "
+        end
+        return table.concat(out)
+    end,
+}
+
+function TableGen.create_struct(struct_data)
+    -- TODO
+    -- Maintain a repetitive design while in development. I don't quite know
+    -- how this will unfold yet. In release, consider putting the following in
+    -- a single loop to reduce runtime hit.
+    local struct_size = utl._extract_validate_struct_size(struct_data)
+    local struct_type = utl._extract_validate_struct_type(struct_data)
+    local struct_vals = utl._extract_validate_struct_init(struct_data)
+    local struct_mems = utl._extract_validate_struct_mems(struct_data)
+    -- INFO
+    -- Register cdef w/ ffi registry and create type constructor
+    ffi.cdef(create_cdef(struct_mems, struct_type, struct_size))
+    return ffi.metatype(ffi.typeof(struct_type), _metatable), struct_vals
 end
 
 return TableGen
