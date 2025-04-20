@@ -28,12 +28,17 @@ local function create_binary(self, filename)
     file:close()
 end
 
+local function create_hashfile(self, filename)
+    utl._compute_hash_table("shasum -a 256", filename)
+end
+
 -- TODO 
 -- Keep our metatable simple. I don't quite know how __tostring should look so
 -- make it reflect a simple hexdump like output for now.
 local _metatable = {
     __index = {
         create_binary = create_binary,
+        create_hashfile = create_hashfile,
         size = function(self) return ffi.sizeof(self) end,
     },
     __tostring = function(self)
