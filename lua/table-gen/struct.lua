@@ -4,21 +4,22 @@ local cfg = require("table-gen.config")
 local utl = require("table-gen.utils")
 
 local function create_cdef(struct_mems, struct_type, struct_size)
-    return string.format(
+    local cdef = string.format(
         [[
 typedef union
 {
-    struct
+    struct __attribute__((__packed__))
     {
 %s
     };
     uint8_t raw[%d];
-} __attribute__((__packed__)) %s;
+} %s;
 ]],
         struct_mems,
         struct_size,
         struct_type
     )
+    return cdef
 end
 
 local function create_binary(self, filename)
@@ -27,16 +28,20 @@ local function create_binary(self, filename)
     file:close()
 end
 
+-- TODO 
+-- Keep our metatable simple. I don't quite know how __tostring should look so
+-- make it reflect a simple hexdump like output for now.
 local _metatable = {
     __index = {
         create_binary = create_binary,
-        size = function(self)
-            return ffi.sizeof(self)
-        end,
+        size = function(self) return ffi.sizeof(self) end,
     },
     __tostring = function(self)
         local out, size, fmt = {}, self:size(), cfg._cfg.outfmt
         for i = 0, size - 1 do
+            -- TODO  I think we get a wee bit more runtime efficiency throw raw
+            -- indexing than if we were to use table.insert. Maybe check this
+            -- later. Be a nice little blog write up to research later.
             out[#out + 1] = string.format(fmt, self.raw[i])
             out[#out + 1] = ((i + 1) % 8 == 0) and "\n" or " "
         end
@@ -46,16 +51,20 @@ local _metatable = {
 
 function TableGen.create_struct(struct_data)
     -- TODO
-    -- Maintain a repetitive design while in development. I don't quite know
-    -- how this will unfold yet. In release, consider putting the following in
-    -- a single loop to reduce runtime hit.
+    -- Reduce runtime overhead later but for now lets break out the logic and
+    -- make sure it works. I don't know how this will unfold yet so lets keep
+    -- it simple for now. Perhaps later the design will naturally come to me.
     local struct_size = utl._extract_validate_struct_size(struct_data)
     local struct_type = utl._extract_validate_struct_type(struct_data)
     local struct_vals = utl._extract_validate_struct_init(struct_data)
     local struct_mems = utl._extract_validate_struct_mems(struct_data)
     -- INFO
     -- Register cdef w/ ffi registry and create type constructor
-    ffi.cdef(create_cdef(struct_mems, struct_type, struct_size))
+    local struct_cdef = create_cdef(struct_mems, struct_type, struct_size)
+    -- TODO 
+    -- Debug only
+    print(string.format("\nStruct Def:\n%s", struct_cdef))
+    ffi.cdef(struct_cdef)
     return ffi.metatype(ffi.typeof(struct_type), _metatable), struct_vals
 end
 
