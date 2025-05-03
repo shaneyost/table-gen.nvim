@@ -1,5 +1,5 @@
 <div align="center">
-<h1>Table Generator for C</h1>
+<h1>My Neovim Plugin Template</h1>
 <p align="center">
 <a href="https://github.com/shaneyost/nvim-skel.nvim/actions/workflows/ci.yaml">
 <img src="https://github.com/shaneyost/nvim-skel.nvim/actions/workflows/ci.yaml/badge.svg" alt="CI Status">
@@ -14,7 +14,7 @@
 </div>
 
 ## About
-Coming soon, in development ...
+A quick and simple starter template for kicking off a neovim plugin project.
 
 ## Configuration
 
