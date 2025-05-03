@@ -1,2 +1,2 @@
-TableGen._cfg	table-gen.txt	/*TableGen._cfg*
-TableGen.setup()	table-gen.txt	/*TableGen.setup()*
+NvimSkel._cfg	nvim-skel.txt	/*NvimSkel._cfg*
+NvimSkel.setup()	nvim-skel.txt	/*NvimSkel.setup()*

@@ -1,5 +1,5 @@
 describe("placeholder", function()
     it("should require plugin", function()
-        require("table-gen")
+        require("nvim-skel")
     end)
 end)

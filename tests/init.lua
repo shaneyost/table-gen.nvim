@@ -16,4 +16,4 @@ end
 vim.opt.runtimepath:append(plenary_path)
 
 -- Load your plugin after setting up the runtimepath
-require("table-gen").setup({})
+require("nvim-skel").setup({})

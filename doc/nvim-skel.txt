@@ -1,0 +1,26 @@
+==============================================================================
+------------------------------------------------------------------------------
+                                                              *NvimSkel.setup()*
+                          `NvimSkel.setup`({user_cfg})
+Sets/Configures nvim-skel.nvim
+Parameters ~
+{user_cfg} `(table|nil)` Module config table.
+
+Usage ~
+>lua
+
+  require('nvim-skel').setup() -- use default config
+  -- OR
+  require('nvim-skel').setup({}) -- replace {} with your config table
+<
+
+==============================================================================
+------------------------------------------------------------------------------
+                                                                 *NvimSkel._cfg*
+                                `NvimSkel._cfg`
+The default configuration table
+>lua
+  NvimSkel._cfg = {}
+<
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
